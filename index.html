@@ -2,92 +2,75 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>ドラッグ音楽プレーヤー</title>
+<title>DOPP Composer</title>
+
 <style>
-  #tracks {
-    display: flex;
-    gap: 10px; 
-    margin-bottom: 15px;
-  }
-  .track {
-    width: 50px;
-    height: 50px;
-    background: #ddd;
-    border: 2px solid #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    cursor: grab;
-    user-select: none;
-  }
+body {
+  font-family: sans-serif;
+  background: #f4f4f4;
+}
+
+/* 音源パレット */
+#palette {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sound {
+  width: 60px;
+  height: 60px;
+  background: #ffd966;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: grab;
+}
+
+/* タイムライン */
+.layer {
+  position: relative;
+  height: 80px;
+  border: 2px solid #999;
+  margin-bottom: 10px;
+  background: white;
+}
+
+/* ブロック */
+.block {
+  position: absolute;
+  height: 60px;
+  top: 10px;
+  background: #6fa8dc;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+}
 </style>
 </head>
+
 <body>
 
-<h2>並び替えて再生</h2>
+<h2>DOPP Composer</h2>
 
-<div id="tracks">
-  <div class="track" draggable="true" data-key="A">A</div>
-  <div class="track" draggable="true" data-key="B">B</div>
-  <div class="track" draggable="true" data-key="C">C</div>
-  <div class="track" draggable="true" data-key="D">D</div>
-  <div class="track" draggable="true" data-key="E">E</div>
+<div id="palette">
+  <div class="sound" draggable="true" data-key="A">A</div>
+  <div class="sound" draggable="true" data-key="B">B</div>
+  <div class="sound" draggable="true" data-key="C">C</div>
 </div>
 
-<button onclick="startPlay()">再生</button>
-<br><br>
+<div class="layer" data-layer="0"></div>
+<div class="layer" data-layer="1"></div>
+<div class="layer" data-layer="2"></div>
 
-<audio id="player" controls></audio>
+<button onclick="play()">再生</button>
+<button onclick="stop()">停止</button>
 
-<script>
-const sounds = {
-  A: "frag_A.wav",
-  B: "frag_B.wav",
-  C: "frag_C.wav",
-  D: "frag_D.wav",
-  E: "frag_E.wav"
-};
-
-const player = document.getElementById("player");
-let playlist = [];
-let index = 0;
-
-/* ドラッグ並び替え */
-let dragged;
-document.querySelectorAll(".track").forEach(t => {
-  t.addEventListener("dragstart", () => dragged = t);
-  t.addEventListener("dragover", e => e.preventDefault());
-  t.addEventListener("drop", e => {
-    e.preventDefault();
-    if (dragged !== t) {
-      const parent = t.parentNode;
-      parent.insertBefore(dragged, t);
-    }
-  });
-});
-
-/* 再生開始 */
-function startPlay() {
-  playlist = [...document.querySelectorAll(".track")]
-    .map(t => t.dataset.key);
-  index = 0;
-  playCurrent();
-}
-
-function playCurrent() {
-  player.src = sounds[playlist[index]];
-  player.play();
-}
-
-/* 曲が終わったら次へ */
-player.addEventListener("ended", () => {
-  index++;
-  if (index < playlist.length) {
-    playCurrent();
-  }
-});
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
